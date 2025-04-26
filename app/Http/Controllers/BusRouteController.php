@@ -12,27 +12,42 @@ class BusRouteController extends Controller
     public function ClosestStation(){
         
     }
-    public function getShortestPathFromPins()
+    public function getShortestPathFromPins(Request $request)
     {
         try {
-            $lastTwoPins = Pin::latest()->take(2)->get();
+            
+            $validated = $request->validate([
+                'startS' => 'required|array',
+                'startS.latitude' => 'required|numeric|between:-90,90',
+                'startS.longitude' => 'required|numeric|between:-180,180',
+                'endS' => 'required|array',
+                'endS.latitude' => 'required|numeric|between:-90,90',
+                'endS.longitude' => 'required|numeric|between:-180,180',
+            ], [
+                'startS.required' => 'يرجى تحديد نقطة البداية.',
+                'endS.required' => 'يرجى تحديد نقطة النهاية.',
+            ]);
+            
+            $startS = $validated['startS'];
+            $endS = $validated['endS'];
 
-            if ($lastTwoPins->count() < 2) {
-                return response()->json(['error' => 'لم يتم إدخال نقطتين بعد.'], 200);
+            if (!$startS || !$endS) {
+                return response()->json(['error' => 'الموقعين غير متوفرين.'], 400);
             }
-
-            $sortedPins = $lastTwoPins->sortBy('created_at')->values();
-            $start = $sortedPins[0];
-            $end = $sortedPins[1];
-
+            
+            // استخراج الإحداثيات
+            $startLat = $startS['latitude'];
+            $startLng = $startS['longitude'];
+            $endLat = $endS['latitude'];
+            $endLng = $endS['longitude'];
             $routes = BusRoute::all();
             $graph = $this->buildGraph($routes);
 
             // 1️⃣ إيجاد أقرب عقدة لمسار الباص من نقطة البداية
-            $closestStartNode = $this->findClosestNode($graph, $start->latitude, $start->longitude);
+            $closestStartNode = $this->findClosestNode($graph, $startLat, $startLng);
 
             // 2️⃣ إيجاد أقرب عقدة لمسار الباص من نقطة النهاية
-            $closestEndNode = $this->findClosestNode($graph, $end->latitude, $end->longitude);
+            $closestEndNode = $this->findClosestNode($graph, $endLat, $endLng);
 
             // 3️⃣ المسار بواسطة الباص بين المحطتين
             $busPath = $this->aStar($graph, $closestStartNode, $closestEndNode);
@@ -43,7 +58,7 @@ class BusRouteController extends Controller
 
             // 5️⃣ دمج المسارات: من نقطة البداية إلى أقرب محطة، ثم الباص، ثم إلى الوجهة
             $fullPath = [
-                [$start->latitude, $start->longitude],
+                [$startLat, $startLng],
                 [$startNodeCoords['lat'], $startNodeCoords['lng']],
             ];
 
@@ -53,7 +68,7 @@ class BusRouteController extends Controller
             }
 
             $fullPath[] = [$endNodeCoords['lat'], $endNodeCoords['lng']];
-            $fullPath[] = [$end->latitude, $end->longitude];
+            $fullPath[] = [$endLat, $endLng];
 
             // 6️⃣ حساب المسافة الكلية التقريبية
             $totalDistance = 0;
@@ -64,14 +79,21 @@ class BusRouteController extends Controller
                 );
             }
 
+            $formattedPath = array_map(function ($pair) {
+                return implode(',', array_reverse($pair));
+            }, $fullPath);
+            
+            // dd([
+            //     'path' => $formattedPath,
+            //     'distance' => $totalDistance
+            // ]);
+    
             return response()->json([
-                'path' => array_map(function ($pair) {
-                    return implode(',', array_reverse($pair)); // نعكس [lat, lng] إلى [lng, lat]
-                }, $fullPath),
-                'distance' => $totalDistance,
+                'path' => $formattedPath,
+                'distance' => $totalDistance
             ]);
+            
         } catch (\Exception $e) {
-            // /Log::error('خطأ في المسار الكامل:', ['exception' => $e]);
             return response()->json(['error' => 'حدث خطأ أثناء الحساب.'], 500);
         }
     }
