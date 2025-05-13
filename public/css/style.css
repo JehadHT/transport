@@ -1,0 +1,192 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+#locateButton {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: white;
+    border: none;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+#drawPathButton {
+    position: fixed;
+    bottom: 0px;
+    right: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+    padding: 0px 0px;
+    z-index: 1001;
+}
+
+.container_search {
+    position: fixed;
+    background-color: white;
+    left: 20px;
+    top: 20px;
+    padding: 8px;
+    border: none;
+    outline: none;
+    z-index: 1001;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+}
+
+/* تعديل الحقل */
+.leaflet-control-geocoder input {
+    position: fixed;
+    background-color: white;
+    right: 20px;
+    top: 20px;
+    padding: 8px;
+    border: none;
+    outline: none;
+    z-index: 1001;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+}
+
+/* تعديل الزر */
+.leaflet-control-geocoder button {
+    font-weight: 700;
+    color: black;
+    width: 100%;
+    padding: 8px;
+    padding-left: 30px;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+}
+
+/* تأثير عند المرور */
+.leaflet-control-geocoder button:hover {
+    background-color: #0b5ed7;
+}
+
+.search {
+    font-weight: 700;
+    color: black;
+    width: 100%;
+    padding-left: 30px;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+}
+
+div>.img {
+    position: absolute;
+    left: 12px;
+    top: 6px;
+    pointer-events: none;
+    width: 16px;
+    z-index: 1002;
+    background-color: transparent;
+}
+
+#sideMenu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: rgb(65, 58, 58);
+    transition: right 0.3s ease;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+#sideMenu.active {
+    right: 0;
+}
+
+.startLocation {
+    position: absolute;
+    background-color: white;
+    color: grey;
+    right: 50px;
+    top: 20px;
+    padding: 8px;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+    z-index: 1000;
+    outline: none;
+}
+
+.destination {
+    position: absolute;
+    background-color: white;
+    color: grey;
+    right: 50px;
+    top: 70px;
+    padding: 8px;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+    z-index: 1000;
+    outline: none;
+}
+
+
+.pinLocation {
+    position: absolute;
+    color: white;
+    top: 200px;
+    left: 20px;
+}
+
+#coordinates {
+    position: absolute;
+    color: white;
+    top: 230px;
+    left: 30px;
+}
+
+/* #toggleDistance {
+    position: fixed;
+    background-color: white;
+    color: grey;
+    left: 20px;
+    top: 20px;
+    padding: 8px;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+    outline: none;
+    z-index: 1001;
+} */
+
+
+.locationIsGot {
+    padding-left: 30px;
+    color: black;
+    visibility: visible;
+}
+
+
+
+.led {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: blue;
+    /* LED color */
+    box-shadow: 0 0 8px 2px #66abff, 0 0 20px 4px blue;
+    margin: 10px;
+    display: inline-block;
+    top: 16px;
+    left: 45px;
+    visibility: hidden;
+    z-index: 1000;
+}

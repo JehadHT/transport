@@ -6,8 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map</title>
     <link rel="stylesheet" href="{{ asset('css/leaflet.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <script src="{{ asset('js/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet.polylineDecorator.js') }}"></script>
+    {{-- <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> --}}
+
+    <!-- Leaflet Control Geocoder CSS و JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    {{-- @vite(['resources/css/app.css', 'public/js/map/mapJs.js']) --}}
 
     {{--
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -21,70 +33,29 @@
             height: 100vh;
             /* ملء الشاشة بالكامل */
         }
-
-        #coordinatesList {
-            position: absolute;
-            top: 125px;
-            left: 18px;
-            z-index: 1000;
-            /* ضمان ظهور الزر فوق الخريطة */
-            background: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            /* تحسين شكل الزر */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-            /* إضافة ظل خفيف */
-            cursor: pointer;
-            /* إظهار مؤشر اليد عند المرور على الزر */
-        }
-
-        #locateButton {
-            position: absolute;
-            top: 87px;
-            left: 18px;
-            z-index: 1000;
-            /* ضمان ظهور الزر فوق الخريطة */
-            background: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            /* تحسين شكل الزر */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-            /* إضافة ظل خفيف */
-            cursor: pointer;
-            /* إظهار مؤشر اليد عند المرور على الزر */
-        }
-
-        #drawPathButton {
-            position: absolute;
-            top: 49px;
-            left: 52px;
-            z-index: 1000;
-            /* ضمان ظهور الزر فوق الخريطة */
-            background: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            /* تحسين شكل الزر */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-            /* إضافة ظل خفيف */
-            cursor: pointer;
-            /* إظهار مؤشر اليد عند المرور على الزر */
-        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
-    <button id="locateButton">تحديد الموقع الحالي</button> <!-- زر لتحديد الموقع -->
-    <button id="toggleDistance" style="position: absolute; top: 10px; left: 80px; z-index: 1000;">تفعيل حساب
-        البعد</button>
-    <div id="coordinatesList">
-        <h4>إحداثيات الدبابيس:</h4>
+    <div class="container_search">
+        <img class="img" src="{{ asset('css/images/pin.png') }}" alt="">
+        <input type="text" id="customSearchInput" class="search" placeholder="Search here" />
+    </div>
+
+    <div class="img">
+        <button id="locateButton"><img src="{{ asset('css/images/marker-icon.png') }}" alt=""></button>
+        <!-- زر لتحديد الموقع -->
+    </div>
+    <button id="toggleDistance" style=""></button>
+    <button id="drawPathButton"><img src="{{ asset('css/images/Arrow.png') }}" alt=""></button>
+    <div id="sideMenu">
+        <input type="text" class="startLocation" placeholder="Choose start location">
+        <div class="led"></div>
+        <input type="text" class="destination" placeholder="Choose destination">
+        <p class="pinLocation">Pin Location :</p>
         <ul id="coordinates"></ul>
     </div>
-    <button id="drawPathButton">ارسم المسار</button>
     <script src="{{ asset('js/map/mapJs.js') }}"></script>
 
 </body>

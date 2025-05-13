@@ -1,21 +1,32 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\BusRoute;
 use App\Models\Pin;
 
 class BusRouteController extends Controller
 {
-    // تعديل تجريبي
     public function ClosestStation(){
         
     }
     public function getShortestPathFromPins(Request $request)
     {
         try {
-            
+            $feature = DB::table('geojson_features')
+            ->selectRaw('id, name, ST_AsGeoJSON(geometry) as geometry, properties')
+            ->get();
+
+            $routes = $feature->map(function ($route) {
+                $geometry = json_decode($route->geometry, true);
+                $properties = json_decode($route->properties, true);
+                
+                return (object) [
+                    'geometry' => $geometry,
+                    'properties' => $properties,
+                ];
+            });
             $validated = $request->validate([
                 'startS' => 'required|array',
                 'startS.latitude' => 'required|numeric|between:-90,90',
@@ -28,9 +39,11 @@ class BusRouteController extends Controller
                 'endS.required' => 'يرجى تحديد نقطة النهاية.',
             ]);
             
+            // dd($validated['startS']);
+            
             $startS = $validated['startS'];
             $endS = $validated['endS'];
-
+            
             if (!$startS || !$endS) {
                 return response()->json(['error' => 'الموقعين غير متوفرين.'], 400);
             }
@@ -40,7 +53,7 @@ class BusRouteController extends Controller
             $startLng = $startS['longitude'];
             $endLat = $endS['latitude'];
             $endLng = $endS['longitude'];
-            $routes = BusRoute::all();
+            // $routes = BusRoute::all();
             $graph = $this->buildGraph($routes);
 
             // 1️⃣ إيجاد أقرب عقدة لمسار الباص من نقطة البداية
@@ -50,7 +63,7 @@ class BusRouteController extends Controller
             $closestEndNode = $this->findClosestNode($graph, $endLat, $endLng);
 
             // 3️⃣ المسار بواسطة الباص بين المحطتين
-            $busPath = $this->aStar($graph, $closestStartNode, $closestEndNode);
+            $busPath = $this->dijkstra($graph, $closestStartNode, $closestEndNode);
 
             // 4️⃣ تحويل string إلى إحداثيات فعلية
             $startNodeCoords = $this->parseNodeKey($closestStartNode);
@@ -83,10 +96,6 @@ class BusRouteController extends Controller
                 return implode(',', array_reverse($pair));
             }, $fullPath);
             
-            // dd([
-            //     'path' => $formattedPath,
-            //     'distance' => $totalDistance
-            // ]);
     
             return response()->json([
                 'path' => $formattedPath,
@@ -97,35 +106,47 @@ class BusRouteController extends Controller
             return response()->json(['error' => 'حدث خطأ أثناء الحساب.'], 500);
         }
     }
-
-
     private function buildGraph($routes)
     {
         $graph = [];
+        $allNodes = [];
+    
+        // 1️⃣ استخراج كل النقاط من جميع المسارات
         foreach ($routes as $route) {
             $geometry = is_string($route->geometry) ? json_decode($route->geometry, true) : $route->geometry;
 
-            if (!isset($geometry['coordinates'])) {
-                continue; // تخطى هذا المسار إذا لم يكن يحتوي على إحداثيات
-            }
-
-            $coordinates = $geometry['coordinates'];
-
-            for ($i = 0; $i < count($coordinates) - 1; $i++) {
-                $from = $coordinates[$i];
-                $to = $coordinates[$i + 1];
-
-                $fromKey = implode(',', $from);
-                $toKey = implode(',', $to);
-                $distance = $this->calculateDistance(
-                    ['lat' => $from[1], 'lng' => $from[0]],
-                    ['lat' => $to[1], 'lng' => $to[0]]
-                );
-
-                $graph[$fromKey][$toKey] = $distance;
-                $graph[$toKey][$fromKey] = $distance; // ثنائي الاتجاه
+            // $geometry = json_decode($route->geometry, true);
+    
+            if ($geometry['type'] === 'LineString') {
+                foreach ($geometry['coordinates'] as $coord) {
+                    $lat = $coord[0];
+                    $lng = $coord[1];
+                    $key = $this->nodeToKey(node: ['lat' => $lat, 'lng' => $lng]);
+    
+                    // حفظ النقطة
+                    if (!isset($allNodes[$key])) {
+                        $allNodes[$key] = ['lat' => $lat, 'lng' => $lng];
+                    }
+                }
             }
         }
+    
+        // 2️⃣ ربط كل نقطة بجيرانها القريبين
+        foreach ($allNodes as $keyA => $nodeA) {
+            foreach ($allNodes as $keyB => $nodeB) {
+                if ($keyA === $keyB) continue; // تجاهل نفس النقطة
+    
+                $distance = $this->calculateDistance($nodeA, $nodeB);
+    
+                if ($distance <= 0.15) { // لو المسافة أقل من 150 متر تقريبًا، نربطهم
+                    $graph[$keyA][] = [
+                        'node' => $keyB,
+                        'cost' => $distance,
+                    ];
+                }
+            }
+        }
+    
         return $graph;
     }
 
@@ -149,42 +170,85 @@ class BusRouteController extends Controller
         return $closest;
     }
 
-    private function aStar($graph, $start, $goal)
+    private function dijkstra($graph, $startKey, $endKey)
     {
-        $openSet = [$start];
-        $cameFrom = [];
-
-        $gScore = [$start => 0];
-        $fScore = [$start => $this->heuristic($start, $goal)];
-
-        while (!empty($openSet)) {
-            usort($openSet, function ($a, $b) use ($fScore) {
-                return ($fScore[$a] ?? PHP_INT_MAX) <=> ($fScore[$b] ?? PHP_INT_MAX);
-            });
-
-            $current = array_shift($openSet);
-            if ($current === $goal) {
+        $queue = new \SplPriorityQueue();
+        $queue->insert($startKey, 0);
+    
+        $distances = [$startKey => 0];
+        $previous = [];
+    
+        while (!$queue->isEmpty()) {
+            $current = $queue->extract();
+    
+            if ($current === $endKey) {
                 return [
-                    'path' => $this->reconstructPath($cameFrom, $current),
-                    'distance' => $gScore[$goal]
+                    'path' => $this->reconstructPath($previous, $current),
                 ];
             }
-
-            foreach ($graph[$current] as $neighbor => $dist) {
-                $tentative_gScore = $gScore[$current] + $dist;
-                if ($tentative_gScore < ($gScore[$neighbor] ?? PHP_INT_MAX)) {
-                    $cameFrom[$neighbor] = $current;
-                    $gScore[$neighbor] = $tentative_gScore;
-                    $fScore[$neighbor] = $gScore[$neighbor] + $this->heuristic($neighbor, $goal);
-                    if (!in_array($neighbor, $openSet)) {
-                        $openSet[] = $neighbor;
-                    }
+    
+            if (!isset($graph[$current])) continue;
+    
+            foreach ($graph[$current] as $neighbor) {
+                $alt = $distances[$current] + $neighbor['cost'];
+    
+                if (!isset($distances[$neighbor['node']]) || $alt < $distances[$neighbor['node']]) {
+                    $distances[$neighbor['node']] = $alt;
+                    $previous[$neighbor['node']] = $current;
+                    $queue->insert($neighbor['node'], -$alt); // نستخدم -alt لأن SplPriorityQueue يعطي الأولوية للأكبر
                 }
             }
         }
-
-        return ['path' => [], 'distance' => null]; // لا يوجد مسار
+    
+        return [
+            'path' => [], // لم يتم العثور على طريق
+        ];
     }
+    
+
+    // private function aStar($graph, $startKey, $endKey)
+    // {
+    //     $openSet = new \SplPriorityQueue();
+    //     $openSet->insert($startKey, 0);
+    
+    //     $cameFrom = [];
+    //     $gScore = [$startKey => 0];
+    //     $fScore = [$startKey => $this->calculateDistance(
+    //         $this->parseNodeKey($startKey),
+    //         $this->parseNodeKey($endKey)
+    //     )];
+    
+    //     while (!$openSet->isEmpty()) {
+    //         $current = $openSet->extract();
+    
+    //         if ($current === $endKey) {
+    //             return [
+    //                 'path' => $this->reconstructPath($cameFrom, $current),
+    //             ];
+    //         }
+    
+    //         if (!isset($graph[$current])) continue;
+    
+    //         foreach ($graph[$current] as $neighbor) {
+    //             $tentativeGScore = $gScore[$current] + $neighbor['cost'];
+    
+    //             if (!isset($gScore[$neighbor['node']]) || $tentativeGScore < $gScore[$neighbor['node']]) {
+    //                 $cameFrom[$neighbor['node']] = $current;
+    //                 $gScore[$neighbor['node']] = $tentativeGScore;
+    //                 $fScore[$neighbor['node']] = $tentativeGScore + $this->calculateDistance(
+    //                     $this->parseNodeKey($neighbor['node']),
+    //                     $this->parseNodeKey($endKey)
+    //                 );
+    //                 $openSet->insert($neighbor['node'], -$fScore[$neighbor['node']]);
+    //             }
+    //         }
+    //     }
+    
+    //     return [
+    //         'path' => [], // لم يتم العثور على طريق
+    //     ];
+    // }
+    
 
     private function heuristic($a, $b)
     {
@@ -223,6 +287,11 @@ class BusRouteController extends Controller
         return $radius * $c;
     }
 
+    private function nodeToKey($node)
+{
+    return $node['lat'] . ',' . $node['lng'];
+}
+
     private function parseNodeKey($nodeKey)
     {
         [$lng, $lat] = explode(',', $nodeKey);
@@ -231,5 +300,45 @@ class BusRouteController extends Controller
             'lng' => (float) $lng
         ];
     }
-
+    public function findClosestPointOnRoute(Request $request)
+    {
+        // 1. استلام الإحداثيات من المستخدم
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+    
+        // 2. إيجاد أقرب مسار (LineString)
+        $nearestRoute = DB::table('geojson_features')
+            ->select('id', 'geometry')
+            ->orderByRaw("geometry <-> ST_SetSRID(ST_MakePoint(?, ?), 4326)", [$longitude, $latitude])
+            ->limit(1)
+            ->first();
+    
+        if (!$nearestRoute) {
+            return response()->json(['error' => 'No route found.'], 404);
+        }
+    
+        // 3. حساب أقرب نقطة على هذا المسار
+        $closestPoint = DB::table('geojson_features')
+            ->selectRaw("
+                ST_AsText(
+                    ST_ClosestPoint(
+                        geometry,
+                        ST_SetSRID(ST_MakePoint(?, ?), 4326)
+                    )
+                ) AS closest_point
+            ", [$longitude, $latitude])
+            ->where('id', $nearestRoute->id)
+            ->first();
+    
+        // 4. تحويل POINT(lon lat) إلى array
+        if ($closestPoint && preg_match('/POINT\(([-\d\.]+) ([-\d\.]+)\)/', $closestPoint->closest_point, $matches)) {
+            return response()->json([
+                'closest_longitude' => $matches[1],
+                'closest_latitude'  => $matches[2],
+                'route_id' => $nearestRoute->id,
+            ]);
+        }
+    
+        return response()->json(['error' => 'Could not extract closest point.'], 500);
+    }
 }

@@ -9,8 +9,8 @@ class BusRoute extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'geometry'];
-
-    protected $casts = [
-        'geometry' => 'array',  // تأكد من أن العمود يتم تحويله إلى مصفوفة من GeoJSON
-    ];}
+    // protected $fillable = ['name', 'geometry'];
+    protected $guarded = [];
+    protected $casts = ['geometry'];  // 'geometry' => 'array', تم تعديل هذا السطر
+    
+}
