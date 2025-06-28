@@ -27,49 +27,136 @@ var toggleDistance = document.getElementById('toggleDistance');
 
 // زر تحديد الموقع الحالي
 var locateButton = document.getElementById('locateButton');
+let MyLocation = null;
+let busRoutePath = null; // المسار الأزرق
 
-// إضافة حدث الضغط على الزر
-locateButton.addEventListener('click', function () {
-    if (navigator.geolocation) {
-        // طلب تتبع موقع المستخدم باستخدام Geolocation API
-        navigator.geolocation.watchPosition(
-            function (position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                var accuracy = position.coords.accuracy;
+// تحديد الموقع الحالي عند تحميل الصفحة وتعبئة الحقل
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+        // حصلنا على الموقع عبر GPS أو Wi-Fi
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        MyLocation = [lat, lng];
+        const startInput = document.querySelector('.startLocation');
+        startInput.classList.add("locationIsGot");
+        startInput.value = "Your Location";
+        document.querySelector('.led').style.visibility = "visible";
 
-                // إذا كانت العلامة والدائرة موجودة، قم بتحديث مواقعهما بدلاً من إعادة إنشائهما
-                if (userMarker && userCircle) {
-                    userMarker.setLatLng([lat, lng]); // تحديث موقع العلامة
-                    userCircle.setLatLng([lat, lng]); // تحديث موقع الدائرة
-                    userCircle.setRadius(accuracy); // تحديث نصف قطر الدائرة
-                } else {
-                    // إذا لم تكن العلامة والدائرة موجودتين، قم بإنشائهما
-                    userMarker = L.marker([lat, lng]).addTo(map)
-                        .bindPopup("أنت هنا").openPopup(); // إضافة رسالة عند الموقع
-                    userCircle = L.circle([lat, lng], {
-                        radius: accuracy, // نصف القطر بناءً على دقة الموقع
-                        color: 'blue', // لون حدود الدائرة
-                        fillColor: 'blue', // لون التعبئة
-                        fillOpacity: 0.1, // الشفافية
-                        weight: 1 // سمك الحدود
-                    }).addTo(map);
-                }
+    }, function (error) {
+        document.querySelector('.startLocation').placeholder = "Location unavailable";
+        alert("⚠️ تعذر تحديد موقعك بدقة. يرجى التأكد من تفعيل GPS وعدم تشغيل VPN.");
+    }, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    });
 
-                // تحريك الخريطة لتتبع المستخدم
-                map.setView([lat, lng], 13);
-            },
-            function (error) {
-                // التعامل مع الأخطاء مثل رفض المستخدم أو انعدام الاتصال
-                alert("لم نتمكن من تحديد موقعك. الرجاء التحقق من إعدادات الموقع.");
-            },
-            {
-                enableHighAccuracy: true // طلب أعلى دقة ممكنة
+} else {
+    document.querySelector('.startLocation').placeholder = "Geolocation not supported";
+}
+
+// زر تحديد الموقع بالرسم على الخريطة
+document.getElementById('locateButton').addEventListener('click', function () {
+    if (!navigator.geolocation) {
+        alert("المتصفح لا يدعم تحديد الموقع.");
+        return;
+    }
+
+    navigator.geolocation.watchPosition(function (position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        MyLocation = [lat, lng];
+
+        if (userMarker && userCircle) {
+            userMarker.setLatLng(MyLocation);
+            userCircle.setLatLng(MyLocation);
+            userCircle.setRadius(accuracy);
+        } else {
+            userMarker = L.marker(MyLocation).addTo(map).bindPopup("أنت هنا").openPopup();
+            userCircle = L.circle(MyLocation, {
+                radius: accuracy,
+                color: 'blue',
+                fillColor: 'blue',
+                fillOpacity: 0.1,
+                weight: 1
+            }).addTo(map);
+
+            drawWalkingRoute(MyLocation, userMarker, 'start');
+        }
+
+        map.setView(MyLocation, 13);
+    }, function (error) {
+        alert("⚠️ لم نتمكن من تحديد موقعك.");
+    }, {
+        enableHighAccuracy: true
+    });
+});
+
+// البحث اليدوي من خلال الحقول
+document.getElementById('manualSearchBtn').addEventListener('click', async function () {
+    const startText = document.querySelector('.startLocation').value.trim();
+    const endText = document.querySelector('.destination').value.trim();
+
+    if (!startText || !endText) {
+        alert("يرجى إدخال وجهتي البداية والنهاية.");
+        return;
+    }
+
+    const apiKey = '5b3ce3597851110001cf6248e8997fbcbabf4bb2b40ff2ec3a348037';
+    const geocodeUrl = (place) =>
+        `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encodeURIComponent(place)}&size=1`;
+
+    try {
+        // حذف المسارات والدبابيس السابقة
+        if (busRoutePath) {
+            map.removeLayer(busRoutePath);
+            busRoutePath = null;
+        }
+        markers.forEach(m => {
+            map.removeLayer(m);
+            if (m.lineToStation) map.removeLayer(m.lineToStation);
+        });
+        markers.length = 0;
+
+        let startCoords;
+
+        if (startText === "Your Location") {
+            if (!MyLocation) {
+                alert("⚠️ لم يتم تحديد موقعك بعد.");
+                return;
             }
-        );
-    } else {
-        // إذا كان المتصفح لا يدعم Geolocation API
-        alert("المتصفح الخاص بك لا يدعم تحديد الموقع الجغرافي.");
+            startCoords = [MyLocation[1], MyLocation[0]]; // [lng, lat]
+        } else {
+            const startRes = await fetch(geocodeUrl(startText)).then(r => r.json());
+            startCoords = startRes.features?.[0]?.geometry?.coordinates;
+        }
+
+        const endRes = await fetch(geocodeUrl(endText)).then(r => r.json());
+        const endCoords = endRes.features?.[0]?.geometry?.coordinates;
+
+        if (!startCoords || !endCoords) {
+            alert("⚠️ لم يتم العثور على الإحداثيات.");
+            return;
+        }
+
+        const startLatLng = [startCoords[1], startCoords[0]];
+        const endLatLng = [endCoords[1], endCoords[0]];
+
+        const startMarker = L.marker(startLatLng, { draggable: true }).addTo(map);
+        startMarker.type = 'start';
+        markers.push(startMarker);
+        drawWalkingRoute(startLatLng, startMarker, 'start');
+
+        const endMarker = L.marker(endLatLng, { draggable: true }).addTo(map);
+        endMarker.type = 'end';
+        markers.push(endMarker);
+        drawWalkingRoute(endLatLng, endMarker, 'end');
+
+    } catch (error) {
+        console.error("❌ خطأ أثناء جلب الإحداثيات:", error);
+        alert("حدث خطأ أثناء معالجة الموقع. تأكد من الاتصال بالإنترنت.");
     }
 });
 
@@ -210,32 +297,25 @@ function deg2rad(deg) {
 let startS = null;
 let endS = null;
 let closestStation = null;
+let busPath = null;
 
 map.on('dblclick', function (e) {
-    var lat = e.latlng.lat;
-    var lng = e.latlng.lng;
-    var marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-    // let closestStation = null;
-    let minDistance = Infinity;
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+    const coords = [lat, lng];
+    // حدد نوع الماركر حسب عدد الموجودين
 
+    // إنشاء ماركر جديد
+    var marker = L.marker(coords, { draggable: true }).addTo(map);
     markers.push(marker);
+    let type = (markers.length % 2 === 1) ? 'start' : 'end';
+    marker.type = type;
+    console.log(markers.length % 2 === 0, type);
 
+    // رسم خط المشي من هذا الدبوس إلى أقرب محطة
+    drawWalkingRoute(coords, marker, type);
 
-    stationss.forEach(station => {
-        const distance = getDistanceFromLatLonInKm(
-            lat,
-            lng,
-            station.latitude,
-            station.longitude
-        );
-
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestStation = station;
-        }
-    });
-
-
+    // إرسال نقطة الحفظ للسيرفر
     fetch('/api/save-pin', {
         method: 'POST',
         headers: {
@@ -246,170 +326,63 @@ map.on('dblclick', function (e) {
     })
         .then(response => response.json())
         .then(data => {
-            // console.log('Pin saved:', data);
-            // console.log('closestStation: ', closestStation)
             marker.dbId = data.id;
             updateCoordinates();
         })
         .catch(error => console.error('Error saving pin:', error));
 
-
-    // طلب مسار المشي من openrouteservice
-    const apiKey = '5b3ce3597851110001cf6248e8997fbcbabf4bb2b40ff2ec3a348037';
-    const start = `${lng},${lat}`;
-    const end = `${closestStation.longitude},${closestStation.latitude}`;
-    const url = `https://api.openrouteservice.org/v2/directions/foot-walking?api_key=${apiKey}&start=${start}&end=${end}`;
-
-    fetch(url)
-        .then(res => res.json())
-        .then(routeData => {
-            const coords = routeData.features[0].geometry.coordinates;
-            const latlngs = coords.map(coord => [coord[1], coord[0]]);
-            const newLine = L.polyline(latlngs, { color: 'green' }).addTo(map);
-            marker.lineToStation = newLine;
-            const distance = routeData.features[0].properties.summary.distance / 1000;
-            const duration = routeData.features[0].properties.summary.duration / 60;
-            marker.bindPopup(
-                `أنت هنا<br>أقرب محطة: ${closestStation.name}<br>المسافة: ${distance.toFixed(2)} كم<br>الوقت المتوقع: ${duration.toFixed(1)} دقيقة`
-            ).openPopup();
-        })
-        .catch(error => console.error('خطأ في جلب المسار الفعلي:', error));
-
-    if (markers.length <= 2) {
-        if (markers.length === 1) {
-            startS = closestStation;
-        }
-        if (markers.length === 2) {
-            endS = closestStation;
-        }
-    }
-
-    if (markers.length >= 3) {
-        markers.forEach(m => {
-            map.removeLayer(m);
-            if (m.lineToStation) {
-                map.removeLayer(m.lineToStation);
-            }
-        });
-        markers = [];
-        document.getElementById('coordinates').innerHTML = '';
-    }
-
-    if (startS && endS) {
-        fetch('/api/send-to-controll', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                startS: startS,
-                endS: endS
-            })
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log('Response:', data);
-                if (!data.path || data.path.length === 0) {
-                    alert("لم يتم العثور على مسار صالح");
-                    return;
-                }
-                console.log('The Costs is: ', data.total_cost);
-                console.log('The line name is: ', data.line_name);
-
-                const geojsonFeatures = data.path.map(segment => JSON.parse(segment.geojson));
-                const path = L.geoJSON(geojsonFeatures, {
-                    style: { color: 'blue', weight: 5 }
-                }).addTo(map);
-                map.fitBounds(path.getBounds());
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    let isDragging = false;
-    marker.on('dragstart', function () {
-        isDragging = true;
-        clearTimeout(pressTimer);
-    });
-
+    // عند سحب الماركر
     marker.on('dragend', function (event) {
-        isDragging = false;
-        var updatedLatLng = event.target.getLatLng();
-        const apiKey = '5b3ce3597851110001cf6248e8997fbcbabf4bb2b40ff2ec3a348037';
-        const start = `${updatedLatLng.lng},${updatedLatLng.lat}`;
-        const end = `${closestStation.longitude},${closestStation.latitude}`;
-        const url = `https://api.openrouteservice.org/v2/directions/foot-walking?api_key=${apiKey}&start=${start}&end=${end}`;
-        updateCoordinates();
+        const newCoords = [event.target.getLatLng().lat, event.target.getLatLng().lng];
+        // إزالة خط المشي قبل التحريك
 
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                if (marker.lineToStation) {
-                    map.removeLayer(marker.lineToStation);
-                }
-                const coords = data.features[0].geometry.coordinates;
-                const latlngs = coords.map(coord => [coord[1], coord[0]]);
-                const newLine = L.polyline(latlngs, { color: 'green' }).addTo(map);
-                marker.lineToStation = newLine;
-                const distance = data.features[0].properties.summary.distance / 1000;
-                const duration = data.features[0].properties.summary.duration / 60;
-                marker.setPopupContent(`أنت هنا<br>أقرب محطة: ${closestStation.name}<br>المسافة: ${distance.toFixed(2)} كم<br>الوقت المتوقع: ${duration.toFixed(1)} دقيقة`);
-            })
-            .catch(error => console.error('خطأ في جلب المسار الفعلي:', error));
+        if (marker.lineToStation) {
+            map.removeLayer(marker.lineToStation);
+        }
 
+        // إعادة رسم خط المشي
+        drawWalkingRoute(newCoords, marker, marker.type);
+
+        // تحديث في قاعدة البيانات
         fetch(`/api/update-pin/${marker.dbId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ lat: updatedLatLng.lat, lng: updatedLatLng.lng, closestStation: closestStation })
+            body: JSON.stringify({ lat: newCoords[0], lng: newCoords[1] })
         })
             .then(response => response.json())
             .then(data => console.log('Pin updated:', data))
             .catch(error => console.error('Error updating pin:', error));
     });
 
+    // حذف الماركر عند الضغط مطولًا
     let pressTimer;
-    marker.on('mousedown', function () {
+    let isDragging = false;
+
+    marker.on('dragstart', () => {
+        isDragging = true;
+        clearTimeout(pressTimer);
+    });
+
+    marker.on('mousedown', () => {
         if (!isDragging) {
             pressTimer = setTimeout(() => {
-                console.log('Deleting pin with ID:', marker.dbId);
-
-                if (marker.lineToStation) {
-                    map.removeLayer(marker.lineToStation);
-                }
-                fetch(`/api/delete-pin/${marker.dbId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                    .then(response => {
-                        console.log('Response status:', response.status);
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Pin deleted:', data);
-                        map.removeLayer(marker);
-                        markers = markers.filter(m => m !== marker);
-                        updateCoordinates();
-                    })
-                    .catch(error => console.error('Error deleting pin:', error));
+                if (marker.lineToStation) map.removeLayer(marker.lineToStation);
+                map.removeLayer(marker);
+                markers = markers.filter(m => m !== marker);
+                updateCoordinates();
             }, 1000);
         }
     });
 
-    marker.on('mouseup', function () {
+    marker.on('mouseup', () => {
         clearTimeout(pressTimer);
+        isDragging = false;
     });
-
     updateCoordinates();
 });
-
-
 
 // التعامل مع زر التبديل
 document.getElementById('toggleDistance').addEventListener('click', function () {
@@ -450,11 +423,11 @@ fetch('/api/stations')
     .then(stations => {
 
         stationss = stations;
-        stations.forEach(station => {
-            L.marker([station.latitude, station.longitude])
-                .addTo(map)
-                .bindPopup(`<strong>${station.name}</strong>`);
-        });
+        // stations.forEach(station => {
+        //     L.marker([station.latitude, station.longitude])
+        //         .addTo(map)
+        //         .bindPopup(`<strong>${station.name}</strong>`);
+        // });
     })
     .catch(error => {
         console.error('خطأ في جلب بيانات المحطات:', error);
@@ -463,74 +436,55 @@ fetch('/api/stations')
 //رسم المسافة الاقصر بين المسارات
 async function drawShortestPathFromPins(startS, endS) {
     try {
-        if (!startS || !endS) {
-            console.error("يجب تحديد نقطتي البداية والنهاية أولاً.");
-            return;
+        console.log('this is drawPath');
+
+        // رسم مسار الباص إن توفر كلا المحطتين
+        if (startS && endS) {
+            console.log("You are in Condation");
+
+            fetch('/api/send-to-controll', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ startS, endS })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.path || data.path.length === 0) {
+                        alert("⚠️ لم يتم العثور على مسار صالح.walking");
+                        return;
+                    }
+                    console.log('The Costs is: ', data.total_cost);
+                    console.log('The line name is: ', data.line_name);
+
+                    // // 🧽 إزالة المسار الأزرق السابق إن وُجد
+                    if (busRoutePath) {
+                        map.removeLayer(busRoutePath);
+                    }
+
+                    const geojsonFeatures = data.path.map(seg => seg.geojson);
+
+                    // 🎯 رسم المسار الجديد وتخزينه في المتغير
+                    busRoutePath = L.geoJSON(geojsonFeatures, {
+                        style: {
+                            color: 'blue',
+                            weight: 5,
+                            opacity: 0.5
+                        }
+                    }).addTo(map);
+
+                    map.fitBounds(busRoutePath.getBounds());
+                })
+                .catch(error => console.error('❌ خطأ في رسم مسار الباص:', error));
         }
-
-        const response = await fetch('/api/shortest-path', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // ضروري إذا كنت داخل Blade
-            },
-            body: JSON.stringify({ startS, endS }) // هنا نرسل البيانات
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("خطأ في جلب المسار:", errorText);
-            throw new Error("فشل في جلب البيانات");
-        }
-
-        const data = await response.json();
-        console.log("بيانات السيرفر:", data); // ✅
-
-        if (data.error) {
-            alert(data.error);
-            return;
-        }
-
-        const latlngs = data.path.map(coordStr => {
-            const [lng, lat] = coordStr.split(',').map(Number);
-            return [lat, lng];
-        });
-
-        if (latlngs.length === 0) {
-            alert("لم يتم العثور على مسار صالح.");
-            return;
-        }
-
-        // رسم الخط على الخريطة
-        const pathLine = L.polyline(latlngs, {
-            color: 'blue',
-            weight: 5
-        }).addTo(map);
-
-        // تقريب الخريطة لتتناسب مع المسار
-        map.fitBounds(pathLine.getBounds());
-
-        // عرض المسافة
-        L.popup()
-            .setLatLng(latlngs[Math.floor(latlngs.length / 2)])
-            // .setContent(`المسافة التقريبية: ${data.distance.toFixed(2)} كم`)
-            .openOn(map);
-
     } catch (error) {
         console.error('خطأ في جلب المسار:', error);
     }
 }
 
 const button = document.getElementById('drawPathButton');
-// مثال فرضي
-button.addEventListener('click', () => {
-    if (startS && endS) {
-        drawShortestPathFromPins(startS, endS);
-    } else {
-        alert("يرجى اختيار نقطتي البداية والنهاية أولاً.");
-    }
-});
-
 const sideMenu = document.getElementById('sideMenu');
 
 // Function to open the side menu and set up outside click handler
@@ -568,18 +522,134 @@ button.addEventListener('click', () => {
 
 map.removeControl(map.zoomControl) // remove zoom buttons
 
+//تابع لرسم المسار المشي من الدبوس الى اقرب محطة على المسار
+/**
+ * يرسم مسار المشي من نقطة معينة إلى أقرب محطة
+ * @param {[number, number]} fromCoords [latitude, longitude]
+ * @param {L.Marker|null} marker - العنصر المرئي المرتبط بالنقطة (اختياري)
+ * @param {'start'|'end'|null} type - لتحديد إذا ما كانت نقطة انطلاق أو وصول
+ */
 
+function drawWalkingRoute(fromCoords, marker = null, type = null) {
+    console.log("Call function");
+    const apiKey = '5b3ce3597851110001cf6248e8997fbcbabf4bb2b40ff2ec3a348037';
+    // إيجاد أقرب محطة
+    let closestStation = null;
+    let minDistance = Infinity;
 
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        document.querySelector('.startLocation').classList.add("locationIsGot");
-        document.querySelector('.startLocation').value = "Your Location";
-        document.querySelector('.led').style.visibility = "visible";
-    }, function (error) {
-        document.querySelector('.startLocation').placeholder = "Location unavailable";
+    stationss.forEach(station => {
+        const dist = getDistanceFromLatLonInKm(
+            fromCoords[0], fromCoords[1],
+            station.latitude, station.longitude
+        );
+        if (dist < minDistance) {
+            minDistance = dist;
+            closestStation = station;
+        }
     });
-} else {
-    document.querySelector('.startLocation').placeholder = "Geolocation not supported";
+
+    if (!closestStation) {
+        console.warn("⚠️ لم يتم العثور على أقرب محطة.");
+        return;
+    }
+
+    const start = `${fromCoords[1]},${fromCoords[0]}`; // lng, lat
+    const end = `${closestStation.longitude},${closestStation.latitude}`;
+    const url = `https://api.openrouteservice.org/v2/directions/foot-walking?api_key=${apiKey}&start=${start}&end=${end}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(routeData => {
+            if (!routeData || !routeData.features || !routeData.features.length) {
+                console.error("❌ فشل في استلام بيانات المسار.");
+                return;
+            }
+
+            const coords = routeData.features[0].geometry.coordinates;
+            const latlngs = coords.map(([lng, lat]) => [lat, lng]);
+            const newLine = L.polyline(latlngs, { color: 'green' }).addTo(map);
+            marker.lineToStation = newLine;
+
+            const distance = routeData.features[0].properties.summary.distance / 1000;
+            const duration = routeData.features[0].properties.summary.duration / 60;
+
+            // نافذة منبثقة
+            marker.bindPopup(`
+                ${type === 'start' ? 'نقطة الانطلاق' : type === 'end' ? 'الوجهة' : 'الموقع'}<br>
+                أقرب محطة: ${closestStation.name}<br>
+                المسافة: ${distance.toFixed(2)} كم<br>
+                الوقت المتوقع: ${duration.toFixed(1)} دقيقة
+                `).openPopup();
+
+            if (busRoutePath) {
+                console.log('busRoutePath', busRoutePath);
+                map.removeLayer(busRoutePath);
+                busRoutePath = null;
+            }
+            // إذا أصبح عدد الماركرات 3، امسح الكل واحتفظ بآخر واحد فقط
+            if (markers.length === 3) {
+                const lastMarker = markers[2]; // احتفظ بآخر ماركر مرسوم
+                // إعادة تعيين نقاط البداية والنهاية
+                startS = null;
+                endS = null;
+                // إزالة جميع الماركرات والخطوط من الخريطة
+                markers.forEach(m => {
+                    map.removeLayer(m);
+                    if (m.lineToStation) {
+                        map.removeLayer(m.lineToStation);
+                    }
+                });
+
+                // إعادة تعيين المصفوفة مع آخر ماركر فقط
+                markers = [lastMarker];
+
+                // إعادة عرض الماركر الأخير على الخريطة
+                map.addLayer(lastMarker);
+
+                // إعادة عرض خط المشي إذا وُجد
+                if (lastMarker.lineToStation) {
+                    map.addLayer(lastMarker.lineToStation);
+                }
+
+                // تحديث صندوق الإحداثيات إن وجد
+                document.getElementById('coordinates').innerHTML = '';
+            }
+            console.log("length marker :", markers.length)
+
+            // تعيين startS و endS حسب الترتيب
+
+            if (type === 'start') {
+                startS = closestStation;
+                console.log("This is starts");
+            } else {
+                endS = closestStation;
+                console.log("This is end");
+            }
+        })
+        .catch(error => {
+            console.error('❌ فشل في جلب مسار المشي من OpenRoute:', error);
+        });
+}
+
+/**
+ * ينشئ دبوس ذكي يمكن تحريكه ويرتبط بمسار مشي إلى أقرب محطة
+ * @param {[number, number]} coords [latitude, longitude]
+ * @param {'start'|'end'} type - نوع الدبوس
+ */
+function createMarker(coords, type = null) {
+    const marker = L.marker(coords, { draggable: true }).addTo(map);
+    markers.push(marker);
+
+    // رسم المسار أول مرة
+    drawWalkingRoute(coords, marker, type);
+
+    // عند سحب الدبوس وتحريره
+    marker.on('dragend', function (event) {
+        const newCoords = [
+            event.target.getLatLng().lat,
+            event.target.getLatLng().lng
+        ];
+        console.log("✅ تم سحب الدبوس إلى:", newCoords);
+        drawWalkingRoute(newCoords, marker, type);
+    });
 }

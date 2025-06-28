@@ -9,6 +9,7 @@ use App\Http\Controllers\GetGeojsonController;
 use App\Http\Controllers\GeojsonFeaturesController;
 use App\Http\Controllers\EdgesController;
 use App\Http\Controllers\MyController;
+use App\Http\Controllers\ChatAIController;
 use App\Http\Controllers\UpCoordinateController;
 use App\Models\GetGeojson;
 use App\Models\Geojson_features;
@@ -48,5 +49,8 @@ Route::delete('/delete-pin/{id}', [UpCoordinateController::class, 'destroy'])->n
 Route::post('/find-shortest-path', [BusRouteController::class, 'findShortestPath']);
 Route::post('/get-shortest-path-from-pins', [BusRouteController::class, 'getShortestPathFromPins']);
 Route::get('/route/{start}/{end}', [GeojsonFeaturesController::class, 'getRoute']);
+Route::post('/route', [BusRouteController::class,'find']);
 
 Route::get('/create-topology', [MyController::class, 'createTopology']);
+//api for chat
+// Route::post('/chat-ai', [ChatAIController::class, 'handle']);

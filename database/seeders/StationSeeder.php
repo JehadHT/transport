@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\Station;
 
 class StationSeeder extends Seeder
@@ -11,232 +12,1345 @@ class StationSeeder extends Seeder
     
     public function run(): void
     {
-    Station::truncate();
-
-    Station::create([
-        'name'=>'الصفا',
-        'latitude'=>'33.57404787293895',
-        'longitude'=>'36.41155345407785'
-    ]);
-    Station::create([
+    DB::table('stations')->truncate();
+    DB::table('stations')->insert([
+        [
+            'name'=>'الصفا',
+            'latitude'=>'33.57404787293895',
+            'longitude'=>'36.41155345407785',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'عبدالرؤوف',
         'latitude'=>'33.57401463559988',
-        'longitude'=>'36.40930949920835'
-    ]);
-    Station::create([
+        'longitude'=>'36.40930949920835',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'ساحة الشهداء',
         'latitude'=>'33.57464160900419',
-        'longitude'=>'36.40597023507053'
-    ]);
-
-    Station::create([
+        'longitude'=>'36.40597023507053',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'جامع الرحمة',
         'latitude'=>'33.575726016156494',
-        'longitude'=>'36.399129213841206'
-    ]);
-
-    Station::create([
+        'longitude'=>'36.399129213841206',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'فرن راضي',
         'latitude'=>'33.572937667496504',
-        'longitude'=>'36.413511706883924'
-    ]);
-
-    Station::create([
+        'longitude'=>'36.413511706883924',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'المدرسة السادسة',
         'latitude'=>'33.57402367864495',
-        'longitude'=>'36.413172940067795'
-    ]);
-
-    Station::create([
+        'longitude'=>'36.413172940067795',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'المدرسة المحدثة',
         'latitude'=>'33.57401945673797',
-        'longitude'=>'36.41253160589355'
-    ]);
-    
-    Station::create([
+        'longitude'=>'36.41253160589355',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'بوظة صلاح',
         'latitude'=>'33.571150349360934',
-        'longitude'=>'36.39814046425539'
-    ]);
-    
-    Station::create([
+        'longitude'=>'36.39814046425539',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'المسجد الكبير',
         'latitude'=>'33.570999980544755',
-        'longitude'=>'36.40030547053124'
-    ]);
-    
-    Station::create([
+        'longitude'=>'36.40030547053124',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'حديقة الجلاء',
         'latitude'=>'33.57119314287736',
-        'longitude'=>'36.412842062158006'
-    ]);
-
-    Station::create([
+        'longitude'=>'36.412842062158006',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'مشفى حمدان',
         'latitude'=>'33.5710393258954',
-        'longitude'=>'36.39923459998542'
-    ]);
-
-    Station::create([
+        'longitude'=>'36.39923459998542',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
         'name'=>'سوق الخضرة',
         'latitude'=>'33.57095698741192',
-        'longitude'=>'36.40134164763248'
-    ]);
-
-    Station::create([
-        'name'=>'سوق المتورات',
-        'latitude'=>'33.570921882830845',
-        'longitude'=>'36.40287914330591'
-    ]);
-
-    Station::create([
-        'name'=>'شاورما العوافي',
+        'longitude'=>'36.40134164763248',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'سوق المتورات',
+            'latitude'=>'33.570921882830845',
+            'longitude'=>'36.40287914330591',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'شاورما العوافي',
         'latitude'=>'33.57101130535493',
-        'longitude'=>'36.40669844047778'
-    ]);
-
-    Station::create([
-        'name'=>'فروج المحبة',
+        'longitude'=>'36.40669844047778',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'فروج المحبة',
         'latitude'=>'33.571063693992244',
-        'longitude'=>'36.4087353815882'
-    ]);
-
-    Station::create([
-        'name'=>'مدرسة الهاشمية',
+        'longitude'=>'36.4087353815882',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مدرسة الهاشمية',
         'latitude'=>'33.57112036099346',
-        'longitude'=>'36.410403639602265'
-    ]);
-
-    Station::create([
-        'name'=>'الهمك',
+        'longitude'=>'36.410403639602265',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'الهمك',
         'latitude'=>'33.495007235623',
-        'longitude'=>'36.322903633118'
-    ]);
-    
-    Station::create([
-        'name'=>'جامع بلال',
+        'longitude'=>'36.322903633118',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع بلال',
         'latitude'=>'33.503613956705',
-        'longitude'=>'36.317088603973'
-    ]);
-    
-    Station::create([
-        'name'=>'جسر حرستا',
+        'longitude'=>'36.317088603973',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جسر حرستا',
         'latitude'=>'33.56282835908107',
-        'longitude'=>'36.360343848032585'
-    ]);
-
-    Station::create([
-        'name'=>'مفرق حرستا',
+        'longitude'=>'36.360343848032585',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مفرق حرستا',
         'latitude'=>'33.55876127047718',
-        'longitude'=>'36.35710535039965'
-    ]);
-
-    Station::create([
-        'name'=>'المشفى العسكري',
+        'longitude'=>'36.35710535039965',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'المشفى العسكري',
         'latitude'=>'33.57887426014362',
-        'longitude'=>'36.37946859979371'
-    ]);
-
-    Station::create([
-        'name'=>'مفرق الكورنيش',
+        'longitude'=>'36.37946859979371',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مفرق الكورنيش',
         'latitude'=>'33.570835771526916',
-        'longitude'=>'36.39495895684604'
-    ]);
-
-    Station::create([
-        'name'=>'مطغم انجوي',
+        'longitude'=>'36.39495895684604',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مطغم انجوي',
         'latitude'=>'33.57109851932266',
-        'longitude'=>'36.397278676874976'
-    ]);
-
-    Station::create([
-        'name'=>'موقف الدرج',
+        'longitude'=>'36.397278676874976',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الدرج',
         'latitude'=>'33.538644098430495',
-        'longitude'=>'36.335393946409965'
-    ]);
-
-    Station::create([
-        'name'=>'موقف الكراجات',
+        'longitude'=>'36.335393946409965',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الكراجات',
         'latitude'=>'33.531300722844506',
-        'longitude'=>'36.32482301445381'
-    ]);
-
-    Station::create([
-        'name'=>'شعبة التجنيد',
+        'longitude'=>'36.32482301445381',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'شعبة التجنيد',
         'latitude'=>'33.57665113767584',
-        'longitude'=>'36.37427863785311'
-    ]);
-
-    Station::create([
-        'name'=>'دوار بدران',
+        'longitude'=>'36.37427863785311',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'دوار بدران',
         'latitude'=>'33.57552789577622',
-        'longitude'=>'36.395777547955646'
-    ]);
-
-    Station::create([
-        'name'=>'دوار البلدية',
+        'longitude'=>'36.395777547955646',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'دوار البلدية',
         'latitude'=>'33.57148164559062',
-        'longitude'=>'36.39505150375717'
-    ]);
-
-    Station::create([
-        'name'=>'مسجد النعسان',
+        'longitude'=>'36.39505150375717',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مسجد النعسان',
         'latitude'=>'33.56970678135157',
-        'longitude'=>'36.39471469008191'
-    ]);
-
-    Station::create([
-        'name'=>'جسر الكورنيش',
+        'longitude'=>'36.39471469008191',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جسر الكورنيش',
         'latitude'=>'33.566832888714075',
-        'longitude'=>'36.39255367170887'
-    ]);
-
-    Station::create([
-        'name'=>'مفرق القوتلي',
+        'longitude'=>'36.39255367170887',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مفرق القوتلي',
         'latitude'=>'33.56449021527659',
-        'longitude'=>'36.39587058754947'
-    ]);
-
-    Station::create([
-        'name'=>'الأوقاف القديمة',
+        'longitude'=>'36.39587058754947',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'الأوقاف القديمة',
         'latitude'=>'33.565362324532074',
-        'longitude'=>'36.395941510122725'
-    ]);
-
-    Station::create([
-        'name'=>'مسجد البغدادي',
+        'longitude'=>'36.395941510122725',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مسجد البغدادي',
         'latitude'=>'33.5661914307188',
-        'longitude'=>'36.396030127401474'
-    ]);
-
-    Station::create([
-        'name'=>'شركة الفؤاد',
+        'longitude'=>'36.396030127401474',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'شركة الفؤاد',
         'latitude'=>'33.56744657102216',
-        'longitude'=>'36.396173249269395'
-    ]);
-
-    Station::create([
-        'name'=>'بوظة النبلاء',
+        'longitude'=>'36.396173249269395',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'بوظة النبلاء',
         'latitude'=>'33.568840982648055',
-        'longitude'=>'36.396355544796165'
-    ]);
-
-    Station::create([
-        'name'=>'محكمة دوما',
-        'latitude'=>'33.57110110195519',
-        'longitude'=>'36.39657952058661'
-    ]);
-
-    Station::create([
-        'name'=>'موقف بوظة صلاح',
-        'latitude'=>'33.57110619786019',
-        'longitude'=>'36.398134556600354'
-    ]);
-
-    Station::create([
-        'name'=>'مشفى البيروني',
+        'longitude'=>'36.396355544796165',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى البيروني',
         'latitude'=>'33.57278385238385',
-        'longitude'=>'36.36778125752275'
+        'longitude'=>'36.36778125752275',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف بوظة صلاح',
+        'latitude'=>'33.57110619786019',
+        'longitude'=>'36.398134556600354',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'محكمة دوما',
+        'latitude'=>'33.57110110195519',
+        'longitude'=>'36.39657952058661',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة المواساة',
+        'latitude'=>'33.51100851670917',
+        'longitude'=>'36.26313061698977',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'نفق الآداب',
+        'latitude'=>'33.509316005225',
+        'longitude'=>'36.268725247221596',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'وزارة التعليم العالي',
+        'latitude'=>'33.51148110672327',
+        'longitude'=>'36.27254698141954',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة الأمويين',
+        'latitude'=>'33.51413716749579',
+        'longitude'=>'36.27595578583967',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع سعد بن معاذ',
+        'latitude'=>'33.52205597698796',
+        'longitude'=>'36.26866441395981',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف آخر الخط الراجع',
+        'latitude'=>'33.57110110195519',
+        'longitude'=>'36.39657952058661',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'',
+        'latitude'=>'33.57110110195519',
+        'longitude'=>'36.39657952058661',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف النافذة الواحدة',
+        'latitude'=>'33.525520617056046',
+        'longitude'=>'36.28961885397456',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة التربية الراجع',
+        'latitude'=>'33.52661368706738',
+        'longitude'=>'36.290836122970234',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة الميسات الراجع',
+        'latitude'=>'33.529531599459176',
+        'longitude'=>'36.29372869524937',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة شمدين الراجع',
+        'latitude'=>'33.534860295677774',
+        'longitude'=>'36.296241347617894',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف صلاح الدين الراجع',
+        'latitude'=>'33.53826323566737',
+        'longitude'=>'36.300780634168774',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'أفران إبن العميد الراجع',
+        'latitude'=>'33.541878845036024',
+        'longitude'=>'36.306348022027265',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى إبن النفيس الراجع',
+        'latitude'=>'33.54570673908131',
+        'longitude'=>'36.30714371640403',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جمعية البركة الراجع',
+        'latitude'=>'33.54656299293873',
+        'longitude'=>'36.309219282823676',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مول قاسيون الراجع',
+        'latitude'=>'33.54825463322929',
+        'longitude'=>'36.31319610958437',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف حاميش',
+        'latitude'=>'33.55028845770876',
+        'longitude'=>'36.31799229698589',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'صيدلية حاميش',
+        'latitude'=>'33.5519821471549',
+        'longitude'=>'36.321865509433394',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مفرق القابون الراجع',
+        'latitude'=>'33.55332591258603',
+        'longitude'=>'36.323720066342105',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'كلية الشرطة الراجع',
+        'latitude'=>'33.54575323067024',
+        'longitude'=>'36.32600724905953',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى إبن الرشيد الراجع',
+        'latitude'=>'33.531403944476025',
+        'longitude'=>'36.324322703300425',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع المهدي',
+        'latitude'=>'33.538158452690325',
+        'longitude'=>'36.32484849113828',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى إبن رشيد',
+        'latitude'=>'33.531372653640986',
+        'longitude'=>'36.32410913521392',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'كلية الشرطة 2',
+        'latitude'=>'33.54244263047261',
+        'longitude'=>'36.32569621660417',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'كلية الشرطة',
+        'latitude'=>'33.54620435864017',
+        'longitude'=>'36.32588833491738',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مطعم صطوف',
+        'latitude'=>'33.5491431184015',
+        'longitude'=>'36.32519493520303',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'',
+        'latitude'=>'33.57110110195519',
+        'longitude'=>'36.39657952058661',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مفرق القابون',
+        'latitude'=>'33.553209990715786',
+        'longitude'=>'36.323786810769434',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'صيدلية حاميش',
+        'latitude'=>'33.551864338958694',
+        'longitude'=>'36.321947376465374',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف حاميش',
+        'latitude'=>'33.55017070651125',
+        'longitude'=>'36.31804921727684',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مول قاسيون',
+        'latitude'=>'33.54812281512531',
+        'longitude'=>'36.31322536427993',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جمعية البركة',
+        'latitude'=>'33.54645185954398',
+        'longitude'=>'36.30928295958694',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى إبن النفيس',
+        'latitude'=>'33.545611401470836',
+        'longitude'=>'36.30728597145236',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى المنار الدولي',
+        'latitude'=>'33.54351208862498',
+        'longitude'=>'36.30675663311817',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'أفران إبن العميد',
+        'latitude'=>'33.54137664392218',
+        'longitude'=>'36.305365456109314',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع صلاح الدين',
+        'latitude'=>'33.538149840744325',
+        'longitude'=>'36.30079887974779',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة شمدين',
+        'latitude'=>'33.534445797149615',
+        'longitude'=>'36.2960851265338',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع أبو النور',
+        'latitude'=>'33.53303978844572',
+        'longitude'=>'36.29435166961184',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'كافيه الميسات',
+        'latitude'=>'33.531616075576196',
+        'longitude'=>'36.29407101656406',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة الميسات',
+        'latitude'=>'33.52792501639493',
+        'longitude'=>'36.29326977469893',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة التربية',
+        'latitude'=>'33.52655694167214',
+        'longitude'=>'36.290569771694265',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الجسر الأبيض',
+        'latitude'=>'33.524605091473475',
+        'longitude'=>'36.28778995327062',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'سفارة اليابان',
+        'latitude'=>'33.51588879211968',
+        'longitude'=>'36.28746351563234',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف آخر الخط',
+        'latitude'=>'33.522009112280074',
+        'longitude'=>'36.2685843715106',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف آخر الخط الراجع',
+        'latitude'=>'33.52205481747622',
+        'longitude'=>'36.268664028438536',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'روضة دار الفرح الراجع',
+        'latitude'=>'33.52204113397738',
+        'longitude'=>'36.2699537285078',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'القصر الجمهوري القديم الراجع',
+        'latitude'=>'33.52223484608959',
+        'longitude'=>'36.27241383706058',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع المرابط',
+        'latitude'=>'33.522472855067164',
+        'longitude'=>'36.27334445978747',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الشطة الراجع',
+        'latitude'=>'33.52297527395925',
+        'longitude'=>'36.276511709405526',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف المصطبة الراجع',
+        'latitude'=>'33.52345199964114',
+        'longitude'=>'36.27801673251889',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع نافذ أفندي الراجع',
+        'latitude'=>'33.523922221436536',
+        'longitude'=>'36.27944680467269',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف شورى الراجع',
+        'latitude'=>'33.524443004917856',
+        'longitude'=>'36.28137442926024',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة نوري باشا الراجع',
+        'latitude'=>'33.52373890043826',
+        'longitude'=>'36.28662324912386',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جسر المشاة',
+        'latitude'=>'33.5226793974753',
+        'longitude'=>'36.28480803136998',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة الروضة الراجع',
+        'latitude'=>'33.520963444911814',
+        'longitude'=>'36.28306821310872',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'السفارة السعودية',
+        'latitude'=>'33.51865784309598',
+        'longitude'=>'36.285089539662636',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'وزارة الخارجية',
+        'latitude'=>'33.57110110195519',
+        'longitude'=>'36.39657952058661',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'حديقة المدفع',
+        'latitude'=>'33.51768249920126',
+        'longitude'=>'36.28598063264036',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف نورا الراجع',
+        'latitude'=>'33.51659489835026',
+        'longitude'=>'36.286952071059574',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'قصر الضيافة الراجع',
+        'latitude'=>'33.51534269086933',
+        'longitude'=>'36.288096465553195',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف جسر الحرية الراجع',
+        'latitude'=>'33.511596577005776',
+        'longitude'=>'36.289095851413975',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف سانا الراجع',
+        'latitude'=>'33.50969667854508',
+        'longitude'=>'36.28975750256009',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة البرامكة الراجع',
+        'latitude'=>'33.507345297387886',
+        'longitude'=>'36.29296825276316',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'حديقة البرامكة الراجع',
+        'latitude'=>'33.505368851525404',
+        'longitude'=>'36.29273889692311',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الفحامة الراجع',
+        'latitude'=>'33.503765869682354',
+        'longitude'=>'36.2926686223565',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'إدارة المخابرات العامة الراجع',
+        'latitude'=>'33.50008599607622',
+        'longitude'=>'36.29258172301647',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى المجتهد',
+        'latitude'=>'33.49944588589473',
+        'longitude'=>'36.29692806617908',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة باب مصلى الراجع',
+        'latitude'=>'33.49907258827096',
+        'longitude'=>'36.299739397512724',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مشفى الرشيد',
+        'latitude'=>'33.49970446427518',
+        'longitude'=>'36.302345447942145',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع سعد',
+        'latitude'=>'33.50045491550742',
+        'longitude'=>'36.304546248465215',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'المرور الراجع',
+        'latitude'=>'33.4984642579053',
+        'longitude'=>'36.30600477626555',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'كراج الست الراجع',
+        'latitude'=>'33.500137130071394',
+        'longitude'=>'36.31004633083327',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع بلال الراجع',
+        'latitude'=>'33.50346916451615',
+        'longitude'=>'36.31646005355421',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الهمك الراجع',
+        'latitude'=>'33.4961694883808',
+        'longitude'=>'36.32155395309064',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الحافلات',
+        'latitude'=>'33.4949608700461',
+        'longitude'=>'36.322703744594264',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الهمك',
+        'latitude'=>'33.49637798592279',
+        'longitude'=>'36.321826251476494',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الطبالة',
+        'latitude'=>'33.49994200414521',
+        'longitude'=>'36.31958325199304',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع بلال',
+        'latitude'=>'33.50370614319745',
+        'longitude'=>'36.31707123756772',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'كراج الست',
+        'latitude'=>'33.499996832884605',
+        'longitude'=>'36.30999853350082',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'المرور',
+        'latitude'=>'33.49798563470034',
+        'longitude'=>'36.30496760602949',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف كراجات درعا',
+        'latitude'=>'33.49738375242448',
+        'longitude'=>'36.302048102535394',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة باب مصلى',
+        'latitude'=>'33.49871407197675',
+        'longitude'=>'36.300117288055105',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'حديقة الملجأ',
+        'latitude'=>'33.49917128131767',
+        'longitude'=>'36.29805667505872',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف المجتهد',
+        'latitude'=>'33.49960092936965',
+        'longitude'=>'36.294734717340475',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'إدارة المخابرات العامة',
+        'latitude'=>'33.500064231697365',
+        'longitude'=>'36.29175631415612',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة كفرسوسة',
+        'latitude'=>'33.50194329789704',
+        'longitude'=>'36.28906861383126',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الفحامة',
+        'latitude'=>'33.50494712666925',
+        'longitude'=>'36.292485496871734',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'حديقة البرامكة الحديثة',
+        'latitude'=>'33.57110110195519',
+        'longitude'=>'36.39657952058661',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة البرامكة',
+        'latitude'=>'33.508009975522825',
+        'longitude'=>'36.28933526223875',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الحلبوني',
+        'latitude'=>'33.508009975522825',
+        'longitude'=>'36.28933526223875',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف سانا',
+        'latitude'=>'33.50981675232846',
+        'longitude'=>'36.28911135021167',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف جامعة دمشق',
+        'latitude'=>'33.51068238843817',
+        'longitude'=>'36.289041539401495',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف جسر الحرية',
+        'latitude'=>'33.51181179530951',
+        'longitude'=>'36.28891598433765',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'قصر الضيافة',
+        'latitude'=>'33.51466783933472',
+        'longitude'=>'36.288538713713706',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف نورا',
+        'latitude'=>'33.516585013219526',
+        'longitude'=>'36.28682381524786',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'نقابة أطباء سورية فرع دمشق',
+        'latitude'=>'33.51756360965099',
+        'longitude'=>'36.28593751841481',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'سفارة هولندا',
+        'latitude'=>'33.5189115806041',
+        'longitude'=>'36.28464399541008',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'المركز الثقافي العربي',
+        'latitude'=>'33.51984592452608',
+        'longitude'=>'36.28381651847528',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة الروضة',
+        'latitude'=>'33.520832662258826',
+        'longitude'=>'36.28300254797617',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع الروضة',
+        'latitude'=>'33.52134992538734',
+        'longitude'=>'36.2829607396219',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة نوري باشا',
+        'latitude'=>'33.5238893293909',
+        'longitude'=>'36.28667958178826',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الجسر الأبيض',
+        'latitude'=>'33.52460300245143',
+        'longitude'=>'36.287786912808144',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع نافذ أفندي',
+        'latitude'=>'33.52388522980975',
+        'longitude'=>'36.279457972485716',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف المصطبة',
+        'latitude'=>'33.52341505941372',
+        'longitude'=>'36.2780330901368',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الشطة',
+        'latitude'=>'33.5229506717896',
+        'longitude'=>'36.27656516879105',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'القصر الجمهوري القديم',
+        'latitude'=>'33.52219703912532',
+        'longitude'=>'36.2724194553509',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'روضة دار الفرح',
+        'latitude'=>'33.52200757334472',
+        'longitude'=>'36.26995313979282',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف السابعة',
+        'latitude'=>'33.52704529949766',
+        'longitude'=>'36.27666778998491',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الشمسية سادسة',
+        'latitude'=>'33.52718880124995',
+        'longitude'=>'36.27817672630269',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الباشكاتب سادسة',
+        'latitude'=>'33.52678521540942',
+        'longitude'=>'36.27710117502065',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف النور مندي',
+        'latitude'=>'33.527411559991094',
+        'longitude'=>'36.27875359551388',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الدرجات',
+        'latitude'=>'33.52789601323852',
+        'longitude'=>'36.280070875516515',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الحرش',
+        'latitude'=>'33.52812823689668',
+        'longitude'=>'36.280773069883026',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف زين العابدين',
+        'latitude'=>'33.528174963460316',
+        'longitude'=>'36.28232324009758',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'صيدلية القصاص',
+        'latitude'=>'33.526670248738085',
+        'longitude'=>'36.280911557407194',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع الدر المحمدي',
+        'latitude'=>'33.52593275699441',
+        'longitude'=>'36.28101762020225',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف شورى الراجع',
+        'latitude'=>'33.52444158216572',
+        'longitude'=>'36.28137457516439',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف جامع العدس',
+        'latitude'=>'33.52489037804635',
+        'longitude'=>'36.282649519344915',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف برنبو الراجع',
+        'latitude'=>'33.52527822823636',
+        'longitude'=>'36.28340314377573',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف العفيف الراجع',
+        'latitude'=>'33.526124161985535',
+        'longitude'=>'36.285021790298146',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف جسر الأبيض الراجع',
+        'latitude'=>'33.52458286272352',
+        'longitude'=>'36.28787252833837',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف النافذة الواحدة',
+        'latitude'=>'33.525518189937415',
+        'longitude'=>'36.289619016826606',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف ساحة التربية',
+        'latitude'=>'33.52617950725525',
+        'longitude'=>'36.29090505320903',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف وزارة التربية',
+        'latitude'=>'33.525093374882346',
+        'longitude'=>'36.29193283861434',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة الشهبندر',
+        'latitude'=>'33.523695610498706',
+        'longitude'=>'36.291868070257806',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف وزارة المالية',
+        'latitude'=>'33.52243941944069',
+        'longitude'=>'36.291868070257806',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الحمرا الراجع',
+        'latitude'=>'33.52118720731296',
+        'longitude'=>'36.29037161253419',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الشعلان الراجع',
+        'latitude'=>'33.51862866118839',
+        'longitude'=>'36.29156087632947',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف وزارة الصناعة',
+        'latitude'=>'33.51657183780836',
+        'longitude'=>'36.292444803650426',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'شركة القدموس',
+        'latitude'=>'33.51799932117987',
+        'longitude'=>'36.291966567529926',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة المحافظة',
+        'latitude'=>'33.51636260478419',
+        'longitude'=>'36.29494607567531',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف شارع الثورة الراجع',
+        'latitude'=>'33.514657119653705',
+        'longitude'=>'36.299768936537845',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف شارع الثورة',
+        'latitude'=>'33.514436134254325',
+        'longitude'=>'36.2995725029611',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'تحت جسر الحرية',
+        'latitude'=>'33.51315251664788',
+        'longitude'=>'36.28888798124569',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف جسر الحرية',
+        'latitude'=>'33.51181067716122',
+        'longitude'=>'36.28891769588836',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'قصر الضيافة',
+        'latitude'=>'33.51466786330529',
+        'longitude'=>'36.28854015706787',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'ساحة النجمة',
+        'latitude'=>'33.51610095961932',
+        'longitude'=>'36.28969189443151',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مجلس الشعب',
+        'latitude'=>'33.51773593244157',
+        'longitude'=>'36.29198277462373',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الشعلان',
+        'latitude'=>'33.51870989352446',
+        'longitude'=>'36.29140482442034',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الحمرا',
+        'latitude'=>'33.52107482458618',
+        'longitude'=>'36.29021907976846',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف عرنوس',
+        'latitude'=>'33.52163724161596',
+        'longitude'=>'36.28998742672164',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'المستشفى الإيطالي',
+        'latitude'=>'33.52231863406972',
+        'longitude'=>'36.289519257707525',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف جسر الأبيض',
+        'latitude'=>'33.524603880830284',
+        'longitude'=>'36.2877894223642',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف العفيف',
+        'latitude'=>'33.52609927783061',
+        'longitude'=>'36.28502907293793',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع أبو عبيدة ابن الجراح',
+        'latitude'=>'33.526603264640755',
+        'longitude'=>'36.280635680400536',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جادة الباشكاتب رابعة',
+        'latitude'=>'33.52615286313532',
+        'longitude'=>'36.27926305618098',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جادة الشمسية رابعة',
+        'latitude'=>'33.52563153818036',
+        'longitude'=>'36.27768509019026',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'مدرسة 17 نيسان',
+        'latitude'=>'33.52534934192859',
+        'longitude'=>'36.276856933054006',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف الكناني',
+        'latitude'=>'33.52581642735143',
+        'longitude'=>'36.27425823399622',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف السلمية',
+        'latitude'=>'33.526524530906',
+        'longitude'=>'36.27491711502029',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف برنبو',
+        'latitude'=>'33.524986020655916',
+        'longitude'=>'36.28345261092579',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'جامع ظبيان',
+        'latitude'=>'33.52575543694415',
+        'longitude'=>'36.27596338510324',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name'=>'موقف شورى',
+        'latitude'=>'33.52441237168418',
+        'longitude'=>'36.28134285331825',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
     ]);
     
     }

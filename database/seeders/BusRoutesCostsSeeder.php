@@ -29,6 +29,34 @@ class BusRoutesCostsSeeder extends Seeder
                 'costs' => 5000,
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'cost_id' => 3,
+                'line_name' => 'جادات سلمية',
+                'costs' => 3000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'cost_id' => 4,
+                'line_name' => 'مساكن برزة-الهمك',
+                'costs' => 3000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'cost_id' => 5,
+                'line_name' => 'مهاجرين صناعة',
+                'costs' => 3000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'cost_id' => 6,
+                'line_name' => 'الدوار شمالي(حاميش)',
+                'costs' => 3000,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
     }

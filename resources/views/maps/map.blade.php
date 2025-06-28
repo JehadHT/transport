@@ -16,10 +16,12 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> --}}
 
     <!-- Leaflet Control Geocoder CSS و JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" /> --}}
+
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
-    {{-- @vite(['resources/css/app.css', 'public/js/map/mapJs.js']) --}}
+    {{-- @vite(['resources/css/app.css', 'public/js/map/mapJs.js'])
 
     {{--
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -53,6 +55,7 @@
         <input type="text" class="startLocation" placeholder="Choose start location">
         <div class="led"></div>
         <input type="text" class="destination" placeholder="Choose destination">
+        <button id="manualSearchBtn">🔍 بحث يدوي</button>
         <p class="pinLocation">Pin Location :</p>
         <ul id="coordinates"></ul>
     </div>
