@@ -14,6 +14,8 @@ use App\Http\Controllers\UpCoordinateController;
 use App\Models\GetGeojson;
 use App\Models\Geojson_features;
 use App\Models\Station;
+use App\Models\Bus;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/get-data', [DataController::class, 'getData']);
 
@@ -54,3 +56,39 @@ Route::post('/route', [BusRouteController::class,'find']);
 Route::get('/create-topology', [MyController::class, 'createTopology']);
 //api for chat
 // Route::post('/chat-ai', [ChatAIController::class, 'handle']);
+
+//For Location 
+// ✅ استقبال موقع السائق
+Route::post('/update-location', function (Request $request) {
+    $request->validate([
+        'bus_id' => 'required|integer',
+        'latitude' => 'required|numeric',
+        'longitude' => 'required|numeric',
+        'speed' => 'nullable|numeric',
+        'status' => 'nullable|string',
+    ]);
+    
+    $bus = Bus::firstOrCreate(['id' => $request->bus_id]);
+    
+    $bus->update([
+        'latitude' => $request->latitude,
+        'longitude' => $request->longitude,
+        'speed' => $request->speed,
+        'status' => $request->status ?? 'active'
+    ]);
+    
+});
+
+// ✅ جلب موقع سائق معين
+Route::get('/update-location/{bus_id}', function ($bus_id) {
+    $bus = Bus::find($bus_id);
+    return $bus ? response()->json($bus) : response()->json(['error' => 'Bus not found'], 404);
+});
+
+
+// ✅ جلب جميع السائقين
+Route::get('/all-buses', function () {
+    return Bus::all();
+    Log::info('الموقع وصل:', $request->all());
+
+});

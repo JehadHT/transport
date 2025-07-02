@@ -89,3 +89,7 @@ Route::post('/api/chat-ai', function (Request $request) {
     ]);
     
 });
+
+Route::view('/driver', 'driver');
+Route::view('/maps', 'mapLoc');
+
