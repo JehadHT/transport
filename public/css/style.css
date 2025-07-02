@@ -1,0 +1,330 @@
+/* @import 'leaflet/dist/leaflet.css';
+@import 'leaflet-draw/dist/leaflet.draw.css'; */
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+
+#locateButton{
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: white;
+    border: none;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+#drawPathButton{
+    position: fixed;
+    bottom: 0px;
+    right: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+    padding: 0px 0px;
+    z-index: 1001;
+}
+
+.container_search {
+    position: fixed;
+    background-color: white;
+    left: 20px;
+    top: 20px;
+    padding: 8px;
+    border: none;
+    outline: none;
+    z-index: 1001;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+}
+
+.search {
+    font-weight: 700;
+    color: black;
+    width: 100%;
+    padding-left: 30px;
+    box-sizing: border-box;
+}
+
+div > .img {
+    position: absolute;
+    left: 12px;
+    top: 6px;
+    pointer-events: none;
+    width: 16px;
+    z-index: 1002;
+    background-color: transparent;
+}
+
+#sideMenu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: rgb(65, 58, 58);
+    transition: right 0.3s ease;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+#sideMenu.active {
+    right: 0;
+}
+
+.startLocation {
+    position: absolute;
+    background-color: white;
+    color: grey;
+    right: 50px;
+    top: 20px;
+    padding: 8px;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+    z-index: 1000;
+    outline: none;
+}
+
+.destination {
+    position: absolute;
+    background-color: white;
+    color: grey;
+    right: 50px;
+    top: 70px;
+    padding: 8px;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+    z-index: 1000;
+    outline: none;
+}
+
+
+.pinLocation {
+    position: absolute;
+    color: white;
+    top: 200px;
+    left: 20px;
+}
+
+#coordinates {
+    position: absolute;
+    color: white;
+    top: 230px;
+    left: 30px;
+}
+
+/* #toggleDistance {
+    position: fixed;
+    background-color: white;
+    color: grey;
+    left: 20px;
+    top: 20px;
+    padding: 8px;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+    outline: none;
+    z-index: 1001;
+} */
+
+
+.locationIsGot {
+    padding-left: 30px;
+    color: black;
+    visibility: visible;
+}
+
+
+
+.led {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: blue; /* LED color */
+    box-shadow: 0 0 8px 2px #66abff, 0 0 20px 4px blue;
+    margin: 10px;
+    display: inline-block;
+    top: 16px;
+    left: 45px;
+    visibility: hidden;
+    z-index: 1000;
+}
+
+
+
+/* Container styling */
+.leaflet-control-geocoder {
+    position: fixed;
+    background-color: white;
+    left: 20px;
+    top: 20px;
+    z-index: 1001;
+    border-radius: 40px !important;
+    box-shadow: 0 0 20px 10px rgba(128, 105, 105, 0.386);
+}
+
+/* Input form */
+.leaflet-control-geocoder-form {
+  display: inline-block; /* ensure visible */
+  width: 100%;
+
+}
+
+/* Search input box */
+.leaflet-control-geocoder-form input {
+    padding: 5px;
+    border-radius: 30px !important;
+    font-weight: 700;
+    color: black;
+    width: 100%;
+    padding-left: 30px;
+    box-sizing: border-box;
+      border-radius: 8px !important; /* your preferred radius */
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  transition: border-radius 0.3s ease;
+}
+
+/* Input focus */
+.leaflet-control-geocoder-form input:focus {
+    border-radius: 30px !important;
+  border-color: #1c6ed5;
+  box-shadow: 0 0 7px #1c6ed5;
+}
+
+/* Search icon/button */
+.leaflet-control-geocoder-icon {
+    display: none !important;
+}
+
+/* Icon hover */
+/* .leaflet-control-geocoder-icon:hover {
+  background-color: #357ABD;
+} */
+
+/* Search suggestions dropdown */
+.leaflet-control-geocoder-alternatives {
+  width: 100% !important;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #4a90e2;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-size: 14px;
+  color: #333;
+  z-index: 1000;
+}
+
+/* Suggestion items */
+.leaflet-control-geocoder-alternatives li {
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Hover on suggestions */
+.leaflet-control-geocoder-alternatives li:hover,
+.leaflet-control-geocoder-selected {
+  background-color: #e6f0ff;
+  color: #1c6ed5;
+}
+
+
+
+.dark_mode {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px;
+    z-index: 1000;
+    border-radius: 8px;
+    border: .1px solid rgba(45, 45, 45, 0.734);
+    outline: none;
+    cursor: pointer;
+    color: rgba(32, 31, 31, 0.73);
+    background-color: white;
+}
+
+
+/* Container for each layer item */
+.leaflet-control-layers label {
+    position: relative;
+    padding-left: 90px; /* space for thumbnail */
+    padding-bottom: 50px;
+    cursor: pointer;
+    background-color: transparent !important;
+}
+
+/* Thumbnail images */
+.leaflet-control-layers label img {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 50px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: transform 0.5s ease;
+    /* opacity: 0.8; */
+    object-fit: cover;
+}
+
+/* Slide thumbnail left on hover */
+.leaflet-control-layers label:hover img {
+    transform: translate(-20px, -50%);
+    opacity: 1;
+    border-color: #0078d7;
+}
+
+
+
+.leaflet-control-layers label span {
+  display: none;
+}
+
+.leaflet-control-layers label.disabled {
+  opacity: 0.5;
+  pointer-events: none; /* disables label clicks */
+}
+
+.leaflet-control-layers label.disabled img {
+  pointer-events: auto; /* enable clicking on image */
+}
+
+
+
+
+
+/* When the geocoder control is expanded (results shown) */
+.leaflet-control-geocoder.leaflet-control-geocoder-expanded {
+  background-color: #f0f8ff; /* Change background */
+  border-radius: 20px !important;
+}
+
+/* Style the input when results are shown */
+
+
+/* Style the alternatives dropdown */
+.leaflet-control-geocoder-alternatives {
+  border-radius: 5px;
+  background: white;
+  border: 1px solid #0078d7;
+  max-height: 200px;
+  overflow-y: auto;
+}

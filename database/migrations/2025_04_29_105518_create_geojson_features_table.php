@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bus_routes', function (Blueprint $table) {
-            $table->id();
+        
+            Schema::create('geojson_features', function (Blueprint $table) {
+                $table->id();
                 $table->string('name'); // اسم العنصر إن أردت
                 $table->geometry('geometry'); // الهندسة، مثال: LineString, Point, Polygon
                 $table->jsonb('properties')->nullable(); // خصائص إضافية مثل اللون، الوصف، إلخ
                 $table->timestamps();
-        });
+            });
     }
 
     /**
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus_routes');
+        Schema::dropIfExists('geojson_features');
     }
 };

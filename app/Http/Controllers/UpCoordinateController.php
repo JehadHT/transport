@@ -23,9 +23,20 @@ class UpCoordinateController extends Controller
     $coordinate = UpCoordinate::create([
         'latitude' => $request->lat,
         'longitude' => $request->lng,
+        'closest_latitude' => $request->lati,
+        'closest_longitude' => $request->lngi,
     ]);
 
     return response()->json($coordinate, 201);
+}
+    public function storeNearestNode(Request $request)
+{
+    $coordinat = UpCoordinate::create([
+        'closest_latitude' => $request->input('lat'),
+        'closest_longitude' => $request->input('lng'),
+    ]);
+
+    return response()->json($coordinat, 201);
 }
 
 
