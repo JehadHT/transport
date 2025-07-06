@@ -87,7 +87,6 @@
     <script>
         let originMarker = null;
         let destinationMarker = null;
-        window.aiOriginCoords = null;
 
         const form = document.getElementById('chat-form');
         const input = document.getElementById('user-message');
@@ -111,18 +110,19 @@
             });
 
             const data = await response.json();
-            // window.aiOriginCoords = data.origin_coords;
-            // window.aidestination = data.destination_coords;
 
-            if (data.origin_coords) {
-                createMarker(data.origin_coords, "start");
-            }
-            if (data.destination_coords) {
-                createMarker(data.destination_coords, "end");
-            }
-
-
+            // عرض الرد النصي من الذكاء الاصطناعي
             messages.innerHTML += `<div><strong>المساعد:</strong> ${data.reply.replace(/\n/g, "<br>")}</div>`;
+
+            // عرض نتائج الأماكن على الخريطة
+            if (data.results && Array.isArray(data.results)) {
+                data.results.forEach(place => {
+                    if (place.coordinates) {
+                        createMarker(place.coordinates, "end");
+                    }
+                });
+            }
+
             messages.scrollTop = messages.scrollHeight;
         });
     </script>
