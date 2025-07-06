@@ -1,20 +1,120 @@
 // إعداد الخريطة
+
 var map = L.map('map', {
     doubleClickZoom: false
 }).setView([33.581733104088, 36.407661437988], 13);
 map.attributionControl.addAttribution('© By Jehad_HT');
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const lightLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+const darkLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; Stadia Maps, OpenStreetMap contributors'
+});
+
+const satelliteLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenTopoMap contributors'
+});
+
+const baseMaps = {
+    "Street Map": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+    "Satellite": satelliteLayer,
+};
+
+document.querySelector('.dark_mode').addEventListener('click', () => {
+    if (map.hasLayer(lightLayer)) {
+        map.removeLayer(lightLayer);
+        map.addLayer(darkLayer);
+        document.querySelector('.dark_mode').innerText = "Light Mode"
+    } else {
+        map.removeLayer(darkLayer);
+        map.addLayer(lightLayer);
+        document.querySelector('.dark_mode').innerText = "Dark Mode"
+    }
+});
+
+L.control.layers(baseMaps).addTo(map);
+
 // أضف مربع البحث
 L.Control.geocoder({
+    collapsed: false,
+    placeholder: "Search",
     defaultMarkGeocode: true,
-    placeholder: "ابحث عن كلية أو موقع...",
-    geocoder: L.Control.Geocoder.nominatim()
+    geocoder: L.Control.Geocoder.nominatim({
+        geocodingQueryParams: {
+            countrycodes: 'sy' // restrict to Syria
+        }
+    })
 })
     .addTo(map);
+
+
+
+let stations = [];
+let stationMarkers = [];
+
+// Fetch stations from API and store them
+// fetch('/api/stations')
+//     .then(response => response.json())
+//     .then(data => {
+//         stations = data; // Store station data
+
+//     })
+//     .catch(error => console.error('Error fetching stations:', error));
+
+// function getNearestStation(latlng) {
+//     let nearestStation = null;
+//     let minDistance = Infinity;
+
+//     stations.forEach(station => {
+//         const stationLatLng = L.latLng(station.latitude, station.longitude);
+//         const distance = latlng.distanceTo(stationLatLng); // Compute distance in meters
+
+//         if (distance < minDistance) {
+//             minDistance = distance;
+//             nearestStation = station;
+//         }
+//     });
+
+//     return nearestStation;
+// }
+fetch('/api/stations')
+    .then(response => response.json())
+    .then(stations => {
+
+        stationss = stations;
+        // stations.forEach(station => {
+        //     L.marker([station.latitude, station.longitude])
+        //         .addTo(map)
+        //         .bindPopup(`<strong>${station.name}</strong>`);
+        // });
+    })
+    .catch(error => {
+        console.error('خطأ في جلب بيانات المحطات:', error);
+    });
+
+
+// Add marker on map double-click
+map.on('dblclick', function (e) {
+    stationMarkers.forEach(marker => map.removeLayer(marker));
+    stationMarkers = [];
+    const marker = L.marker([e.latlng.lat, e.latlng.lng], { draggable: true }).addTo(map);
+
+    const nearestStation = getNearestStation(e.latlng);
+
+    if (nearestStation) {
+        const stationMarker = L.marker([nearestStation.latitude, nearestStation.longitude], { color: 'blue' }).addTo(map)
+            .bindPopup(`<strong>${nearestStation.name}</strong>`).openPopup();
+        stationMarkers.push(stationMarker); // Store station marker
+
+        marker.bindPopup(`
+            <strong>أنت هنا</strong><br>
+            <strong>أقرب محطة:</strong> ${nearestStation.name}<br>
+            <strong>المسافة:</strong> ${(minDistance / 1000).toFixed(2)} كم
+        `).openPopup();
+    }
+});
 
 // المتغيرات لتخزين العلامة والدائرة للمستخدم
 var userMarker = null;
@@ -331,7 +431,15 @@ map.on('dblclick', function (e) {
         })
         .catch(error => console.error('Error saving pin:', error));
 
-    // عند سحب الماركر
+    // التعامل مع سحب الدبوس
+    let isDragging = false;
+    marker.on('dragstart', function () {
+        isDragging = true;
+        clearTimeout(pressTimer);
+    });
+
+
+    // ############## تحديث الإحداثيات عند السحب ##############
     marker.on('dragend', function (event) {
         const newCoords = [event.target.getLatLng().lat, event.target.getLatLng().lng];
         // إزالة خط المشي قبل التحريك
@@ -359,7 +467,6 @@ map.on('dblclick', function (e) {
 
     // حذف الماركر عند الضغط مطولًا
     let pressTimer;
-    let isDragging = false;
 
     marker.on('dragstart', () => {
         isDragging = true;
@@ -381,8 +488,11 @@ map.on('dblclick', function (e) {
         clearTimeout(pressTimer);
         isDragging = false;
     });
+
+    markers.push(marker);
     updateCoordinates();
 });
+
 
 // التعامل مع زر التبديل
 document.getElementById('toggleDistance').addEventListener('click', function () {
@@ -416,6 +526,21 @@ function updateCoordinates() {
         coordinatesList.appendChild(li);
     }
 }
+
+// fetch('/api/shortest-path')
+//     .then(res => res.json())
+//     .then(data => {
+//         console.log('The data is: ', data);
+//         if (!data.path || !data.path.coordinates || data.path.coordinates.length === 0) {
+//             alert("لم يتم العثور على مسار صالح");
+//             return;
+//         }
+//         const path = L.geoJSON(data.path, {
+//             style: { color: 'blue', weight: 5 }
+//         }).addTo(map);
+//         map.fitBounds(path.getBounds());
+//     });
+
 
 
 fetch('/api/stations')

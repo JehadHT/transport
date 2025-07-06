@@ -45,6 +45,7 @@ Route::get('/routes', function () {
 Route::post('/send-to-controll', [EdgesController::class, 'getShortestPath']);
 Route::post('/find-closest-point-on-route', [BusRouteController::class, 'findClosestPointOnRoute']);
 Route::post('/save-pin', [UpCoordinateController::class, 'store']);
+Route::get('/shortest-path', [GetGeojsonController::class, 'getShortestPath']);
 Route::put('/update-pin/{id}', [UpCoordinateController::class, 'update']);
 Route::delete('/delete-pin/{id}', [UpCoordinateController::class, 'destroy'])->name('UpCoordinate.destroy');
 

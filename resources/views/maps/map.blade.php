@@ -61,6 +61,6 @@
     </div>
     <script src="{{ asset('js/map/mapJs.js') }}"></script>
 
-</body>
-
+    </body>
+    
 </html>
